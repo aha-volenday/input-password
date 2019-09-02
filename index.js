@@ -85,6 +85,9 @@ export default class InputPassword extends Component {
 
 		return (
 			<PasswordInput
+				defaultMessages={{
+					maxLen: e => `Maximum length is ${val}`
+				}}
 				minLen={6}
 				maxLen={32}
 				digits={1}
