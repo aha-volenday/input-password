@@ -159,7 +159,15 @@ export default class InputPassword extends Component {
 
 	renderInputConfirm() {
 		const { localConfirmValue } = this.state;
-		const { disabled = false, id, label = '', onChange, placeholder = '', styles = {} } = this.props;
+		const {
+			confirmValue = '',
+			disabled = false,
+			id,
+			label = '',
+			onChange,
+			placeholder = '',
+			styles = {}
+		} = this.props;
 
 		return (
 			<Input
@@ -169,7 +177,7 @@ export default class InputPassword extends Component {
 				disabled={disabled}
 				name={id}
 				onBlur={e => {
-					if (e.target.value != localConfirmValue) onChange(`Confirm${id}`, e.target.value);
+					if (e.target.value != confirmValue) onChange(`Confirm${id}`, e.target.value);
 					this.setState({ isFocused: false });
 				}}
 				onChange={e => this.onChangeConfirm(e.target.value)}
