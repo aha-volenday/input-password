@@ -6,77 +6,39 @@ import { Button, Form, Input, Popover } from 'antd';
 import './styles.css';
 
 export default class InputPassword extends Component {
-	initialState = {
+	state = {
 		errors: [],
 		errorsConfirm: [],
 		hasChange: false,
 		isPopoverVisible: false,
-		localValue: '',
-		localConfirmValue: '',
 		isFocused: false
-	};
-	state = { ...this.initialState, initialState: this.initialState };
-
-	static getDerivedStateFromProps(nextProps, prevState) {
-		// Set initial localValue
-		if (nextProps.value && !prevState.localValue) {
-			return { ...prevState, localValue: nextProps.value, localConfirmValue: nextProps.confirmValue };
-		}
-
-		// Resets equivalent value
-		if (prevState.localValue !== nextProps.value) {
-			// For Add
-			if (typeof nextProps.value === 'undefined' && !prevState.hasChange && !prevState.isFocused) {
-				return { ...prevState.initialState };
-			}
-
-			// For Edit
-			if (!prevState.isFocused) {
-				return {
-					...prevState.initialState,
-					localValue: nextProps.value,
-					localConfirmValue: nextProps.confirmValue
-				};
-			}
-		}
-
-		return null;
-	}
-
-	onChange = value => {
-		const { action } = this.props;
-		this.setState({ localValue: value, hasChange: action === 'add' ? false : true });
 	};
 
 	onChangeConfirm = async value => {
-		const { localConfirmValue } = this.state;
-		const { action, id, onChange, onValidate } = this.props;
+		const { id, onChange, onValidate } = this.props;
 
-		if (localConfirmValue != '' && value == '') onChange(`Confirm${id}`, value);
+		onChange(`Confirm${id}`, value);
 		const errors = this.validateConfirm(value);
-		await this.setState({
-			errorsConfirm: errors,
-			localConfirmValue: value,
-			hasChange: action === 'add' ? false : true
-		});
+		await this.setState({ errorsConfirm: errors });
 		if (onValidate) onValidate(id, errors);
 	};
 
-	validateConfirm = value => {
-		const { localValue = '' } = this.state;
+	validateConfirm = confirmValue => {
+		const { value = '' } = this.props;
 
 		let errors = [];
-		if (localValue != value) errors = [...errors, "Password don't match"];
+		if (value != confirmValue) errors = [...errors, "Password don't match"];
 		return errors;
 	};
 
 	renderInput() {
-		const { localValue } = this.state;
 		const {
 			disabled = false,
 			id,
 			label = '',
+			onBlur = () => {},
 			onChange,
+			onPressEnter = () => {},
 			onValidate,
 			placeholder = '',
 			styles = {},
@@ -93,10 +55,7 @@ export default class InputPassword extends Component {
 				digits={1}
 				specialChars={1}
 				uppercaseChars={1}
-				onChange={e => {
-					if (localValue != '' && e == '') onChange(id, e);
-					this.onChange(e);
-				}}
+				onChange={e => onChange(id, e)}
 				onValidate={e => {
 					const errors = e.errors.map(d => d.message);
 					this.setState({ errors });
@@ -110,7 +69,7 @@ export default class InputPassword extends Component {
 							<ul class="list-group">
 								{rules.map(r => (
 									<li class="list-group-item" key={r.key}>
-										{hasRulePassed(r.key) && localValue ? (
+										{hasRulePassed(r.key) && value ? (
 											<i
 												class="fas fa-check-circle"
 												style={{
@@ -138,18 +97,11 @@ export default class InputPassword extends Component {
 							autoComplete="off"
 							disabled={disabled}
 							name={id}
-							onBlur={e => {
-								if (e.target.value != value) onChange(id, e.target.value);
-								this.setState({ isFocused: false });
-							}}
-							onFocus={() => this.setState({ isFocused: true })}
-							onPressEnter={e => {
-								onChange(id, e.target.value);
-								return true;
-							}}
+							onBlur={onBlur}
+							onPressEnter={onPressEnter}
 							placeholder={placeholder || label || id}
 							style={styles}
-							value={localValue ? localValue : ''}
+							value={value ? value : ''}
 						/>
 					</Popover>
 				)}
@@ -158,13 +110,13 @@ export default class InputPassword extends Component {
 	}
 
 	renderInputConfirm() {
-		const { localConfirmValue } = this.state;
 		const {
 			confirmValue = '',
 			disabled = false,
 			id,
 			label = '',
-			onChange,
+			onBlur = () => {},
+			onPressEnter = () => {},
 			placeholder = '',
 			styles = {}
 		} = this.props;
@@ -176,20 +128,13 @@ export default class InputPassword extends Component {
 				className={'mt-2'}
 				disabled={disabled}
 				name={id}
-				onBlur={e => {
-					if (e.target.value != confirmValue) onChange(`Confirm${id}`, e.target.value);
-					this.setState({ isFocused: false });
-				}}
+				onBlur={onBlur}
 				onChange={e => this.onChangeConfirm(e.target.value)}
-				onFocus={() => this.setState({ isFocused: true })}
-				onPressEnter={e => {
-					onChange(`Confirm${id}`, e.target.value);
-					return true;
-				}}
+				onPressEnter={onPressEnter}
 				placeholder={`Confirm ${placeholder || label || id}`}
 				style={styles}
 				type="password"
-				value={localConfirmValue ? localConfirmValue : ''}
+				value={confirmValue ? confirmValue : ''}
 			/>
 		);
 	}
