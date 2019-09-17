@@ -53,7 +53,6 @@ module.exports = {
 		libraryTarget: 'commonjs2'
 	},
 	externals: {
-		'@volenday/input-date': 'commonjs2 @volenday/input-date',
 		antd: 'commonjs2 antd',
 		react: 'commonjs2 react',
 		'react-password-indicator': 'commonjs2 react-password-indicator'

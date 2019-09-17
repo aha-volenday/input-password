@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PasswordInput from 'react-password-indicator';
-import InputDate from '@volenday/input-date';
-import { Button, Form, Input, Popover } from 'antd';
+import { Form, Input, Popover } from 'antd';
 
 import './styles.css';
 
@@ -9,8 +8,6 @@ export default class InputPassword extends Component {
 	state = {
 		errors: [],
 		errorsConfirm: [],
-		hasChange: false,
-		isPopoverVisible: false,
 		isFocused: false
 	};
 
@@ -139,54 +136,9 @@ export default class InputPassword extends Component {
 		);
 	}
 
-	handlePopoverVisible = visible => {
-		this.setState({ isPopoverVisible: visible });
-	};
-
-	renderPopover = () => {
-		const { isPopoverVisible } = this.state;
-		const { id, label = '', historyTrackValue = '', onHistoryTrackChange } = this.props;
-
-		return (
-			<Popover
-				content={
-					<InputDate
-						id={id}
-						label={label}
-						required={true}
-						withTime={true}
-						withLabel={true}
-						value={historyTrackValue}
-						onChange={onHistoryTrackChange}
-					/>
-				}
-				trigger="click"
-				title="History Track"
-				visible={isPopoverVisible}
-				onVisibleChange={this.handlePopoverVisible}>
-				<span class="float-right">
-					<Button
-						type="link"
-						shape="circle-outline"
-						icon="warning"
-						size="small"
-						style={{ color: '#ffc107' }}
-					/>
-				</span>
-			</Popover>
-		);
-	};
-
 	render() {
-		const { errors, errorsConfirm, hasChange } = this.state;
-		const {
-			action,
-			confirm = false,
-			label = '',
-			required = false,
-			withLabel = false,
-			historyTrack = false
-		} = this.props;
+		const { errors, errorsConfirm } = this.state;
+		const { confirm = false, label = '', required = false, withLabel = false } = this.props;
 
 		const formItemCommonProps = {
 			colon: false,
@@ -204,10 +156,7 @@ export default class InputPassword extends Component {
 
 		return (
 			<Fragment>
-				<Form.Item {...formItemCommonProps}>
-					{historyTrack && hasChange && action !== 'add' && this.renderPopover()}
-					{this.renderInput()}
-				</Form.Item>
+				<Form.Item {...formItemCommonProps}>{this.renderInput()}</Form.Item>
 				{confirm && <Form.Item {...formItemCommonPropsConfirm}>{this.renderInputConfirm()}</Form.Item>}
 			</Fragment>
 		);
