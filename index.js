@@ -11,10 +11,10 @@ export default class InputPassword extends Component {
 		isFocused: false
 	};
 
-	onChangeConfirm = async value => {
+	onChangeConfirm = async (e, value) => {
 		const { id, onChange, onValidate } = this.props;
 
-		onChange(`Confirm${id}`, value);
+		onChange(e, `Confirm${id}`, value);
 		const errors = this.validateConfirm(value);
 		await this.setState({ errorsConfirm: errors });
 		if (onValidate) onValidate(id, errors);
@@ -52,7 +52,7 @@ export default class InputPassword extends Component {
 				digits={1}
 				specialChars={1}
 				uppercaseChars={1}
-				onChange={e => onChange(id, e)}
+				onChange={e => onChange({ target: { name: id, value: e } }, id, e)}
 				onValidate={e => {
 					const errors = e.errors.map(d => d.message);
 					this.setState({ errors });
@@ -124,9 +124,9 @@ export default class InputPassword extends Component {
 				autoComplete="off"
 				className={'mt-2'}
 				disabled={disabled}
-				name={id}
+				name={`Confirm${id}`}
 				onBlur={onBlur}
-				onChange={e => this.onChangeConfirm(e.target.value)}
+				onChange={e => this.onChangeConfirm(e, e.target.value)}
 				onPressEnter={onPressEnter}
 				placeholder={`Confirm ${placeholder || label || id}`}
 				style={styles}
