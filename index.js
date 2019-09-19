@@ -33,6 +33,7 @@ export default class InputPassword extends Component {
 		return errors;
 	};
 
+	onChangeTimeout = null;
 	renderInput() {
 		const {
 			disabled = false,
@@ -59,9 +60,12 @@ export default class InputPassword extends Component {
 				uppercaseChars={1}
 				onChange={e => onChange({ target: { name: id, value: e } }, id, e)}
 				onValidate={e => {
-					const errors = e.errors.map(d => d.message);
-					this.setState({ errors });
-					if (onValidate) onValidate(id, errors);
+					this.onChangeTimeout && clearTimeout(this.onChangeTimeout);
+					this.onChangeTimeout = setTimeout(() => {
+						const errors = e.errors.map(d => d.message);
+						this.setState({ errors });
+						if (onValidate) onValidate(id, errors);
+					}, 500);
 				}}>
 				{({ getInputProps, hasRulePassed, rules }) => (
 					<Popover
