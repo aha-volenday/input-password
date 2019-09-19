@@ -11,13 +11,18 @@ export default class InputPassword extends Component {
 		isFocused: false
 	};
 
+	onChangeConfirmTimeout = null;
 	onChangeConfirm = async (e, value) => {
 		const { id, onChange, onValidate } = this.props;
 
 		onChange(e, `Confirm${id}`, value);
-		const errors = this.validateConfirm(value);
-		await this.setState({ errorsConfirm: errors });
-		if (onValidate) onValidate(id, errors);
+
+		this.onChangeConfirmTimeout && clearTimeout(this.onChangeConfirmTimeout);
+		this.onChangeConfirmTimeout = setTimeout(async () => {
+			const errors = this.validateConfirm(value);
+			await this.setState({ errorsConfirm: errors });
+			if (onValidate) onValidate(id, errors);
+		}, 500);
 	};
 
 	validateConfirm = confirmValue => {
