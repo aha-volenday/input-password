@@ -33,8 +33,20 @@ export default class InputPassword extends Component {
 		return errors;
 	};
 
+	onBlur(event) {
+		const { onBlur = () => {} } = this.props;
+
+		this.setState({ isFocused: false });
+		return onBlur(event);
+	}
+
+	onFocus(event) {
+		this.setState({ isFocused: true });
+	}
+
 	onChangeTimeout = null;
 	renderInput() {
+		const { isFocused } = this.state;
 		const {
 			disabled = false,
 			id,
@@ -69,6 +81,7 @@ export default class InputPassword extends Component {
 				}}>
 				{({ getInputProps, hasRulePassed, rules }) => (
 					<Popover
+						visible={isFocused}
 						zIndex={9999}
 						placement="topLeft"
 						content={
@@ -103,7 +116,8 @@ export default class InputPassword extends Component {
 							autoComplete="off"
 							disabled={disabled}
 							name={id}
-							onBlur={onBlur}
+							onFocus={e => this.onFocus(e)}
+							onBlur={e => this.onBlur(e)}
 							onPressEnter={onPressEnter}
 							placeholder={placeholder || label || id}
 							style={styles}
