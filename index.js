@@ -33,13 +33,15 @@ export default class InputPassword extends Component {
 		return errors;
 	};
 
-	handleFocus(action, event) {
+	onBlur(event) {
 		const { onBlur = () => {} } = this.props;
 
-		this.setState({ isFocused: action == 'focus' ? true : false });
-		if (action == 'blur') {
-			return onBlur(event);
-		}
+		this.setState({ isFocused: false });
+		return onBlur(event);
+	}
+
+	onFocus(event) {
+		this.setState({ isFocused: true });
 	}
 
 	onChangeTimeout = null;
@@ -114,8 +116,8 @@ export default class InputPassword extends Component {
 							autoComplete="off"
 							disabled={disabled}
 							name={id}
-							onFocus={e => this.handleFocus('focus', e)}
-							onBlur={e => this.handleFocus('blur', e)}
+							onFocus={e => this.onFocus(e)}
+							onBlur={e => this.onBlur(e)}
 							onPressEnter={onPressEnter}
 							placeholder={placeholder || label || id}
 							style={styles}
