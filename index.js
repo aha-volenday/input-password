@@ -161,12 +161,18 @@ export default class InputPassword extends Component {
 
 	render() {
 		const { errors, errorsConfirm } = this.state;
-		const { confirm = false, label = '', required = false, withLabel = false } = this.props;
+		const { confirm = false, extra = null, label = '', required = false, withLabel = false } = this.props;
 
 		const formItemCommonProps = {
 			colon: false,
 			help: errors.length != 0 ? errors[0] : '',
-			label: withLabel ? label : false,
+			label: withLabel ? (
+				<>
+					<div style={{ float: 'right' }}>{extra}</div> <span class="label">{label}</span>
+				</>
+			) : (
+				false
+			),
 			required,
 			validateStatus: errors.length != 0 ? 'error' : 'success'
 		};

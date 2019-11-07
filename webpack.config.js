@@ -53,9 +53,9 @@ module.exports = {
 		libraryTarget: 'commonjs2'
 	},
 	externals: {
-		antd: 'commonjs2 antd',
-		react: 'commonjs2 react',
-		'react-password-indicator': 'commonjs2 react-password-indicator'
+		antd: 'antd',
+		react: 'react',
+		'react-password-indicator': 'react-password-indicator'
 	},
 	plugins: [
 		new webpack.optimize.AggressiveMergingPlugin(),
