@@ -179,7 +179,13 @@ export default class InputPassword extends Component {
 		const formItemCommonPropsConfirm = {
 			...formItemCommonProps,
 			help: errorsConfirm.length != 0 ? errorsConfirm[0] : '',
-			label: withLabel ? `Confirm ${label}` : false,
+			label: withLabel ? (
+				<>
+					<div style={{ float: 'right' }}></div> <span class="label">Confirm {label}</span>
+				</>
+			) : (
+				false
+			),
 			validateStatus: errorsConfirm.length != 0 ? 'error' : 'success'
 		};
 
