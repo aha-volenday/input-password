@@ -51,7 +51,6 @@ export default class InputPassword extends Component {
 			disabled = false,
 			id,
 			label = '',
-			onBlur = () => {},
 			onChange,
 			onPressEnter = () => {},
 			onValidate,
@@ -112,7 +111,6 @@ export default class InputPassword extends Component {
 						trigger="click">
 						<Input
 							{...getInputProps()}
-							allowClear
 							autoComplete="off"
 							disabled={disabled}
 							name={id}
@@ -143,7 +141,6 @@ export default class InputPassword extends Component {
 
 		return (
 			<Input
-				allowClear
 				autoComplete="off"
 				className={'mt-2'}
 				disabled={disabled}
