@@ -1,6 +1,6 @@
 {
 	"name": "@volenday/input-password",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"main": "dist/index.min.js",
 	"author": "Volenday <developers@volenday.com>",
 	"license": "MIT",
@@ -10,7 +10,7 @@
 		"build": "webpack --progress -p",
 		"prepublishOnly": "webpack --progress -p"
 	},
-	"dependencies": {
+	"peerDependencies": {
 		"antd": "^3.26.16",
 		"react": "^16.13.1",
 		"react-password-indicator": "^1.0.0"
