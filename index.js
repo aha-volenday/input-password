@@ -1,64 +1,61 @@
-import React, { Component, Fragment } from 'react';
+import React, { useState } from 'react';
 import PasswordInput from 'react-password-indicator';
 import { Form, Input, Popover } from 'antd';
 
 import './styles.css';
 
-export default class InputPassword extends Component {
-	state = {
-		errors: [],
-		errorsConfirm: [],
-		isFocused: false
+export default ({
+	confirm = false,
+	confirmValue = '',
+	disabled = false,
+	extra = null,
+	id,
+	label = '',
+	onBlur = () => {},
+	onChange,
+	onFocus = () => {},
+	onPressEnter = () => {},
+	onValidate,
+	placeholder = '',
+	required = false,
+	styles = {},
+	value = '',
+	withLabel = false
+}) => {
+	const [errors, setErrors] = useState([]);
+	const [errorsConfirm, setErrorsConfirm] = useState([]);
+	const [isFocused, setIsFocused] = useState(false);
+
+	const validateConfirm = confirmValue => {
+		let errors = [];
+		if (value !== confirmValue) errors = [...errors, "Password don't match"];
+		return errors;
 	};
 
-	onChangeConfirmTimeout = null;
-	onChangeConfirm = async (e, value) => {
-		const { id, onChange, onValidate } = this.props;
-
+	let onChangeConfirmTimeout = null;
+	const onChangeConfirm = async (e, value) => {
 		onChange(e, `Confirm${id}`, value);
 
-		this.onChangeConfirmTimeout && clearTimeout(this.onChangeConfirmTimeout);
-		this.onChangeConfirmTimeout = setTimeout(async () => {
-			const errors = this.validateConfirm(value);
-			await this.setState({ errorsConfirm: errors });
+		onChangeConfirmTimeout && clearTimeout(onChangeConfirmTimeout);
+		onChangeConfirmTimeout = setTimeout(async () => {
+			const errors = validateConfirm(value);
+			setErrorsConfirm(errors);
 			if (onValidate) onValidate(id, errors);
 		}, 500);
 	};
 
-	validateConfirm = confirmValue => {
-		const { value = '' } = this.props;
-
-		let errors = [];
-		if (value != confirmValue) errors = [...errors, "Password don't match"];
-		return errors;
+	const handleBlur = e => {
+		setIsFocused(false);
+		return onBlur(e);
 	};
 
-	onBlur(event) {
-		const { onBlur = () => {} } = this.props;
+	const handleFocus = e => {
+		setIsFocused(true);
+		return onFocus(e);
+	};
 
-		this.setState({ isFocused: false });
-		return onBlur(event);
-	}
-
-	onFocus(event) {
-		this.setState({ isFocused: true });
-	}
-
-	onChangeTimeout = null;
-	renderInput() {
-		const { isFocused } = this.state;
-		const {
-			disabled = false,
-			id,
-			label = '',
-			onChange,
-			onPressEnter = () => {},
-			onValidate,
-			placeholder = '',
-			styles = {},
-			value = ''
-		} = this.props;
-
+	let onChangeTimeout = null;
+	const renderInput = () => {
 		return (
 			<PasswordInput
 				defaultMessages={{
@@ -71,10 +68,10 @@ export default class InputPassword extends Component {
 				uppercaseChars={1}
 				onChange={e => onChange({ target: { name: id, value: e } }, id, e)}
 				onValidate={e => {
-					this.onChangeTimeout && clearTimeout(this.onChangeTimeout);
-					this.onChangeTimeout = setTimeout(() => {
+					onChangeTimeout && clearTimeout(onChangeTimeout);
+					onChangeTimeout = setTimeout(() => {
 						const errors = e.errors.map(d => d.message);
-						this.setState({ errors });
+						setErrors(errors);
 						if (onValidate) onValidate(id, errors);
 					}, 500);
 				}}>
@@ -114,8 +111,8 @@ export default class InputPassword extends Component {
 							autoComplete="off"
 							disabled={disabled}
 							name={id}
-							onFocus={e => this.onFocus(e)}
-							onBlur={e => this.onBlur(e)}
+							onFocus={e => handleFocus(e)}
+							onBlur={e => handleBlur(e)}
 							onPressEnter={onPressEnter}
 							placeholder={placeholder || label || id}
 							style={styles}
@@ -125,20 +122,9 @@ export default class InputPassword extends Component {
 				)}
 			</PasswordInput>
 		);
-	}
+	};
 
-	renderInputConfirm() {
-		const {
-			confirmValue = '',
-			disabled = false,
-			id,
-			label = '',
-			onBlur = () => {},
-			onPressEnter = () => {},
-			placeholder = '',
-			styles = {}
-		} = this.props;
-
+	const renderInputConfirm = () => {
 		return (
 			<Input
 				autoComplete="off"
@@ -146,7 +132,7 @@ export default class InputPassword extends Component {
 				disabled={disabled}
 				name={`Confirm${id}`}
 				onBlur={onBlur}
-				onChange={e => this.onChangeConfirm(e, e.target.value)}
+				onChange={e => onChangeConfirm(e, e.target.value)}
 				onPressEnter={onPressEnter}
 				placeholder={`Confirm ${placeholder || label || id}`}
 				style={styles}
@@ -154,43 +140,38 @@ export default class InputPassword extends Component {
 				value={confirmValue ? confirmValue : ''}
 			/>
 		);
-	}
+	};
 
-	render() {
-		const { errors, errorsConfirm } = this.state;
-		const { confirm = false, extra = null, label = '', required = false, withLabel = false } = this.props;
+	const formItemCommonProps = {
+		colon: false,
+		help: errors.length != 0 ? errors[0] : '',
+		label: withLabel ? (
+			<>
+				<div style={{ float: 'right' }}>{extra}</div> <span class="label">{label}</span>
+			</>
+		) : (
+			false
+		),
+		required,
+		validateStatus: errors.length != 0 ? 'error' : 'success'
+	};
+	const formItemCommonPropsConfirm = {
+		...formItemCommonProps,
+		help: errorsConfirm.length != 0 ? errorsConfirm[0] : '',
+		label: withLabel ? (
+			<>
+				<div style={{ float: 'right' }}></div> <span class="label">Confirm {label}</span>
+			</>
+		) : (
+			false
+		),
+		validateStatus: errorsConfirm.length != 0 ? 'error' : 'success'
+	};
 
-		const formItemCommonProps = {
-			colon: false,
-			help: errors.length != 0 ? errors[0] : '',
-			label: withLabel ? (
-				<>
-					<div style={{ float: 'right' }}>{extra}</div> <span class="label">{label}</span>
-				</>
-			) : (
-				false
-			),
-			required,
-			validateStatus: errors.length != 0 ? 'error' : 'success'
-		};
-		const formItemCommonPropsConfirm = {
-			...formItemCommonProps,
-			help: errorsConfirm.length != 0 ? errorsConfirm[0] : '',
-			label: withLabel ? (
-				<>
-					<div style={{ float: 'right' }}></div> <span class="label">Confirm {label}</span>
-				</>
-			) : (
-				false
-			),
-			validateStatus: errorsConfirm.length != 0 ? 'error' : 'success'
-		};
-
-		return (
-			<Fragment>
-				<Form.Item {...formItemCommonProps}>{this.renderInput()}</Form.Item>
-				{confirm && <Form.Item {...formItemCommonPropsConfirm}>{this.renderInputConfirm()}</Form.Item>}
-			</Fragment>
-		);
-	}
-}
+	return (
+		<>
+			<Form.Item {...formItemCommonProps}>{renderInput()}</Form.Item>
+			{confirm && <Form.Item {...formItemCommonPropsConfirm}>{renderInputConfirm()}</Form.Item>}
+		</>
+	);
+};
