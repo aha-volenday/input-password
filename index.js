@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import PasswordInput from 'react-password-indicator';
-import { Form, Input, Popover } from 'antd';
+import { Form, Popover, Skeleton } from 'antd';
 
 import './styles.css';
+
+const browser = typeof process.browser !== 'undefined' ? process.browser : true;
 
 export default ({
 	confirm = false,
@@ -56,6 +57,8 @@ export default ({
 
 	let onChangeTimeout = null;
 	const renderInput = () => {
+		const PasswordInput = require('react-password-indicator');
+
 		return (
 			<PasswordInput
 				defaultMessages={{
@@ -125,6 +128,8 @@ export default ({
 	};
 
 	const renderInputConfirm = () => {
+		const { Input } = require('antd');
+
 		return (
 			<Input
 				autoComplete="off"
@@ -170,8 +175,18 @@ export default ({
 
 	return (
 		<>
-			<Form.Item {...formItemCommonProps}>{renderInput()}</Form.Item>
-			{confirm && <Form.Item {...formItemCommonPropsConfirm}>{renderInputConfirm()}</Form.Item>}
+			<Form.Item {...formItemCommonProps}>
+				{browser ? renderInput() : <Skeleton active paragraph={{ rows: 1, width: '100%' }} title={false} />}
+			</Form.Item>
+			{confirm && (
+				<Form.Item {...formItemCommonPropsConfirm}>
+					{browser ? (
+						renderInputConfirm()
+					) : (
+						<Skeleton active paragraph={{ rows: 1, width: '100%' }} title={false} />
+					)}
+				</Form.Item>
+			)}
 		</>
 	);
 };
