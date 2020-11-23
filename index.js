@@ -58,6 +58,7 @@ export default ({
 	let onChangeTimeout = null;
 	const renderInput = () => {
 		const PasswordInput = require('react-password-indicator');
+		const { Input } = require('antd');
 
 		return (
 			<PasswordInput
