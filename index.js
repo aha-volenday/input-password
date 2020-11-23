@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Popover, Skeleton } from 'antd';
+import PasswordInput from 'react-password-indicator';
 
 import './styles.css';
 
@@ -57,7 +58,7 @@ export default ({
 
 	let onChangeTimeout = null;
 	const renderInput = () => {
-		const PasswordInput = require('react-password-indicator');
+		// const PasswordInput = require('react-password-indicator');
 		const { Input } = require('antd');
 
 		return (
