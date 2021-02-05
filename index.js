@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Form, Popover, Skeleton } from 'antd';
 import PasswordInput from 'react-password-indicator';
 
-import './styles.css';
+const browser = typeof window !== 'undefined' ? true : false;
 
-const browser = typeof process.browser !== 'undefined' ? process.browser : true;
+if (browser) require('./styles.css');
 
 export default ({
 	confirm = false,
