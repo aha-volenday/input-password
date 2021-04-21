@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Form, Popover, Skeleton } from 'antd';
+import { Form, Popover, Skeleton, Tooltip } from 'antd';
 import PasswordInput from 'react-password-indicator';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const browser = typeof window !== 'undefined' ? true : false;
 
@@ -21,6 +22,7 @@ export default ({
 	placeholder = '',
 	required = false,
 	styles = {},
+	toolTip = '',
 	value = '',
 	withLabel = false
 }) => {
@@ -154,7 +156,15 @@ export default ({
 		help: errors.length != 0 ? errors[0] : '',
 		label: withLabel ? (
 			<>
-				<div style={{ float: 'right' }}>{extra}</div> <span class="label">{label}</span>
+				<div style={{ float: 'right' }}>{extra}</div>
+				<span class="label">
+					{label}{' '}
+					{toolTip && (
+						<Tooltip title={toolTip}>
+							<QuestionCircleOutlined />
+						</Tooltip>
+					)}
+				</span>
 			</>
 		) : (
 			false
