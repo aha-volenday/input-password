@@ -12,6 +12,7 @@ export default ({
 	disabled = false,
 	extra = null,
 	id,
+	inlineError = true,
 	label = '',
 	onBlur = () => {},
 	onChange,
@@ -149,9 +150,8 @@ export default ({
 		);
 	};
 
-	const formItemCommonProps = {
+	let formItemCommonProps = {
 		colon: false,
-		help: errors.length != 0 ? errors[0] : '',
 		label: withLabel ? (
 			<>
 				<div style={{ float: 'right' }}>{extra}</div> <span class="label">{label}</span>
@@ -162,9 +162,10 @@ export default ({
 		required,
 		validateStatus: errors.length != 0 ? 'error' : 'success'
 	};
-	const formItemCommonPropsConfirm = {
+	if (inlineError) formItemCommonProps = { ...formItemCommonProps, help: errors.length != 0 ? errors[0] : '' };
+
+	let formItemCommonPropsConfirm = {
 		...formItemCommonProps,
-		help: errorsConfirm.length != 0 ? errorsConfirm[0] : '',
 		label: withLabel ? (
 			<>
 				<div style={{ float: 'right' }}></div> <span class="label">Confirm {label}</span>
@@ -174,6 +175,11 @@ export default ({
 		),
 		validateStatus: errorsConfirm.length != 0 ? 'error' : 'success'
 	};
+	if (inlineError)
+		formItemCommonPropsConfirm = {
+			...formItemCommonPropsConfirm,
+			help: errorsConfirm.length != 0 ? errorsConfirm[0] : ''
+		};
 
 	return (
 		<>
